@@ -42,24 +42,24 @@ export const ProductCatalog: React.FC = () => {
 
         {/* Search and Filter Bar */}
         <div className="mb-12">
-          <div className="flex flex-col md:flex-row gap-6 max-w-5xl mx-auto">
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6 max-w-5xl mx-auto">
             <div className="relative flex-1">
-              <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-purple-400" size={22} />
+              <Search className="absolute left-4 md:left-5 top-1/2 transform -translate-y-1/2 text-purple-400" size={20} />
               <input
                 type="text"
                 placeholder="Busca tu jabón perfecto..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-14 pr-6 py-4 bg-white/80 backdrop-blur-lg border-2 border-purple-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-xl text-lg placeholder-purple-400"
+                className="w-full pl-12 md:pl-14 pr-6 py-3 md:py-4 bg-white/80 backdrop-blur-lg border-2 border-purple-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-xl text-base md:text-lg placeholder-purple-400"
               />
             </div>
-            <div className="flex space-x-4">
-              <button className="px-6 py-4 bg-white/80 backdrop-blur-lg border-2 border-purple-200 rounded-2xl hover:bg-white hover:shadow-xl hover:border-purple-300 transition-all duration-300 flex items-center space-x-3 text-purple-700 font-semibold">
-                <Filter size={22} />
+            <div className="flex space-x-2 md:space-x-4">
+              <button className="px-4 md:px-6 py-3 md:py-4 bg-white/80 backdrop-blur-lg border-2 border-purple-200 rounded-2xl hover:bg-white hover:shadow-xl hover:border-purple-300 transition-all duration-300 flex items-center space-x-2 md:space-x-3 text-purple-700 font-semibold">
+                <Filter size={20} />
                 <span className="hidden sm:inline">Filtros</span>
               </button>
-              <button className="px-6 py-4 bg-white/80 backdrop-blur-lg border-2 border-purple-200 rounded-2xl hover:bg-white hover:shadow-xl hover:border-purple-300 transition-all duration-300 text-purple-700">
-                <Grid size={22} />
+              <button className="px-4 md:px-6 py-3 md:py-4 bg-white/80 backdrop-blur-lg border-2 border-purple-200 rounded-2xl hover:bg-white hover:shadow-xl hover:border-purple-300 transition-all duration-300 text-purple-700">
+                <Grid size={20} />
               </button>
             </div>
           </div>
@@ -67,11 +67,11 @@ export const ProductCatalog: React.FC = () => {
 
         {/* Categories */}
         <div className="mb-16">
-          <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">Categorías Especializadas</h3>
-          <div className="flex flex-wrap justify-center gap-4">
+          <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-6 md:mb-8 text-center">Categorías Especializadas</h3>
+          <div className="flex flex-wrap justify-center gap-2 md:gap-4">
             <button
               onClick={() => setSearchTerm("")}
-              className="px-8 py-4 bg-gradient-to-r from-purple-600 via-violet-600 to-purple-700 text-white rounded-2xl hover:from-purple-700 hover:via-violet-700 hover:to-purple-800 transition-all duration-300 font-bold shadow-xl hover:shadow-purple-500/25 transform hover:scale-105"
+              className="px-4 md:px-8 py-3 md:py-4 bg-gradient-to-r from-purple-600 via-violet-600 to-purple-700 text-white rounded-2xl hover:from-purple-700 hover:via-violet-700 hover:to-purple-800 transition-all duration-300 font-bold shadow-xl hover:shadow-purple-500/25 transform hover:scale-105 text-sm md:text-base"
             >
               Todos los Productos
             </button>
@@ -79,7 +79,7 @@ export const ProductCatalog: React.FC = () => {
               <button
                 key={category}
                 onClick={() => setSearchTerm(category)}
-                className="px-8 py-4 bg-white/80 backdrop-blur-lg border-2 border-purple-200 text-purple-700 rounded-2xl hover:bg-white hover:border-purple-300 hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300 font-semibold transform hover:scale-105"
+                className="px-4 md:px-8 py-3 md:py-4 bg-white/80 backdrop-blur-lg border-2 border-purple-200 text-purple-700 rounded-2xl hover:bg-white hover:border-purple-300 hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300 font-semibold transform hover:scale-105 text-sm md:text-base"
               >
                 {category}
               </button>
@@ -88,7 +88,7 @@ export const ProductCatalog: React.FC = () => {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {filteredProducts.map((product) => (
             <div
               key={product.id}
@@ -124,40 +124,40 @@ export const ProductCatalog: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-8">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs font-bold text-purple-600 bg-purple-100 px-4 py-2 rounded-full border border-purple-200">
+              <div className="p-4 md:p-8">
+                <div className="flex items-center justify-between mb-3 md:mb-4">
+                  <span className="text-xs font-bold text-purple-600 bg-purple-100 px-2 md:px-4 py-1 md:py-2 rounded-full border border-purple-200">
                     {product.category}
                   </span>
                   {product.rating && (
                     <div className="flex items-center space-x-1">
-                      <Star className="text-yellow-400 fill-current" size={18} />
-                      <span className="text-sm font-bold text-gray-700">{product.rating}</span>
+                      <Star className="text-yellow-400 fill-current" size={16} />
+                      <span className="text-xs md:text-sm font-bold text-gray-700">{product.rating}</span>
                     </div>
                   )}
                 </div>
 
-                <h3 className="font-bold text-gray-900 mb-3 text-xl group-hover:text-purple-600 transition-colors duration-300">
+                <h3 className="font-bold text-gray-900 mb-2 md:mb-3 text-lg md:text-xl group-hover:text-purple-600 transition-colors duration-300">
                   {product.name}
                 </h3>
-                <p className="text-gray-600 text-sm mb-6 line-clamp-3 leading-relaxed">{product.description}</p>
+                <p className="text-gray-600 text-xs md:text-sm mb-4 md:mb-6 line-clamp-3 leading-relaxed">{product.description}</p>
 
-                <div className="flex items-center text-sm text-purple-600 mb-6 font-semibold">
-                  <Sparkles size={16} className="mr-2" />
-                  <span>Stock: {product.stock} unidades disponibles</span>
+                <div className="flex items-center text-xs md:text-sm text-purple-600 mb-4 md:mb-6 font-semibold">
+                  <Sparkles size={14} className="mr-1 md:mr-2" />
+                  <span>Stock: {product.stock} unidades</span>
                 </div>
 
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                   <div>
-                    <span className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
+                    <span className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
                       ${product.price}
                     </span>
-                    <span className="text-gray-500 text-sm ml-2">USD</span>
+                    <span className="text-gray-500 text-xs md:text-sm ml-1 md:ml-2">USD</span>
                   </div>
                   <button
                     onClick={() => addToCart(product)}
                     disabled={product.stock === 0}
-                    className="bg-gradient-to-r from-purple-600 via-violet-600 to-purple-700 text-white px-8 py-3 rounded-2xl font-bold hover:from-purple-700 hover:via-violet-700 hover:to-purple-800 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-purple-500/25 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:transform-none"
+                    className="w-full sm:w-auto bg-gradient-to-r from-purple-600 via-violet-600 to-purple-700 text-white px-6 md:px-8 py-2 md:py-3 rounded-2xl font-bold hover:from-purple-700 hover:via-violet-700 hover:to-purple-800 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-purple-500/25 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:transform-none text-sm md:text-base"
                   >
                     {product.stock === 0 ? "Agotado" : "Agregar"}
                   </button>

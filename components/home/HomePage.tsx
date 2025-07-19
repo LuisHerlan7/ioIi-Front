@@ -22,47 +22,47 @@ export const HomePage: React.FC = () => {
               Cosmética Natural Premium • Desde 1946
             </div>
 
-            <h1 className="text-7xl md:text-8xl font-bold mb-6 relative">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 relative">
               <span className="bg-gradient-to-r from-purple-600 via-violet-600 to-purple-800 bg-clip-text text-transparent">
                 L'ERBOLARIO
               </span>
-              <div className="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full animate-pulse"></div>
+              <div className="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full animate-pulse"></div>
             </h1>
 
-            <p className="text-2xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed font-light">
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-700 mb-6 md:mb-8 max-w-3xl mx-auto leading-relaxed font-light px-4">
               Descubre la magia de la naturaleza italiana en cada jabón artesanal.
               <span className="font-semibold text-purple-700"> Ingredientes puros, tradición auténtica.</span>
             </p>
 
-            <div className="flex items-center justify-center space-x-3 text-gray-600 mb-12">
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-3 text-gray-600 mb-8 md:mb-12">
               <div className="flex items-center space-x-1">
                 {[...Array(5)].map((_, i) => (
-                  <Sparkles key={i} className="text-yellow-400 fill-current animate-pulse" size={24} />
+                  <Sparkles key={i} className="text-yellow-400 fill-current animate-pulse" size={20} />
                 ))}
               </div>
-              <span className="text-lg font-semibold">4.9/5 • Más de 25,000 clientes satisfechos</span>
+              <span className="text-sm sm:text-lg font-semibold">4.9/5 • Más de 25,000 clientes satisfechos</span>
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-6 justify-center items-center max-w-2xl mx-auto mb-20">
+          <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-center max-w-2xl mx-auto mb-16 md:mb-20 px-4">
             <button
               onClick={() => navigateTo("client-login")}
-              className="group relative bg-gradient-to-r from-purple-600 via-violet-600 to-purple-700 text-white px-10 py-5 rounded-2xl text-xl font-bold hover:from-purple-700 hover:via-violet-700 hover:to-purple-800 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-purple-500/25 w-full md:w-auto overflow-hidden"
+              className="group relative bg-gradient-to-r from-purple-600 via-violet-600 to-purple-700 text-white px-6 md:px-10 py-4 md:py-5 rounded-2xl text-lg md:text-xl font-bold hover:from-purple-700 hover:via-violet-700 hover:to-purple-800 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-purple-500/25 w-full sm:w-auto overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-              <div className="relative flex items-center justify-center space-x-3">
-                <ShoppingCart size={24} />
+              <div className="relative flex items-center justify-center space-x-2 md:space-x-3">
+                <ShoppingCart size={20} className="md:w-6 md:h-6" />
                 <span>Explorar Colección</span>
-                <Heart size={20} className="animate-pulse" />
+                <Heart size={16} className="animate-pulse md:w-5 md:h-5" />
               </div>
             </button>
 
             <button
               onClick={() => navigateTo("admin-login")}
-              className="bg-white/80 backdrop-blur-lg border-2 border-purple-200 text-purple-700 px-10 py-5 rounded-2xl text-xl font-bold hover:bg-white hover:border-purple-300 hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300 w-full md:w-auto"
+              className="bg-white/80 backdrop-blur-lg border-2 border-purple-200 text-purple-700 px-6 md:px-10 py-4 md:py-5 rounded-2xl text-lg md:text-xl font-bold hover:bg-white hover:border-purple-300 hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300 w-full sm:w-auto"
             >
-              <div className="flex items-center justify-center space-x-3">
-                <Package size={24} />
+              <div className="flex items-center justify-center space-x-2 md:space-x-3">
+                <Package size={20} className="md:w-6 md:h-6" />
                 <span>Panel Admin</span>
               </div>
             </button>
