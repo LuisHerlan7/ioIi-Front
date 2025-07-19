@@ -12,8 +12,8 @@ export const CartView: React.FC = () => {
   const confirmPurchase = () => {
     const orderDetails = cart.map((item) => `${item.product.name} x${item.quantity}`).join(", ")
 
-    const message = `🛒 *Nueva Orden de TechStore* 🛒\n\n📱 Productos:\n${orderDetails}\n\n💰 Total: $${total}\n\n👤 Cliente: ${currentUser?.name}\n📧 Email: ${currentUser?.email}\n\n¡Gracias por tu compra!`
-    const whatsappUrl = `https://wa.me/1234567890?text=${encodeURIComponent(message)}`
+    const message = `🛒 *Nueva Orden de L'ERBOLARIO* 🛒\n\n📱 Productos:\n${orderDetails}\n\n💰 Total: $${total}\n\n👤 Cliente: ${currentUser?.name}\n📧 Email: ${currentUser?.email}`
+    const whatsappUrl = `https://wa.me/59165747121?text=${encodeURIComponent(message)}`
 
     // Create order
     const newOrder = {

@@ -177,7 +177,7 @@ interface AppProviderProps {
   setCurrentView: (view: string) => void
 }
 
-export const AppProvider: React.FC<AppProviderProps> = ({ children, currentView, setCurrentView }) => {
+export const AppProvider: React.FC<AppProviderProps> = ({ children, currentView, setCurrentView }: AppProviderProps) => {
   const [userType, setUserType] = useState<"client" | "admin" | null>(null)
   const [currentUser, setCurrentUser] = useState<ClientUser | null>(null)
   const [users, setUsers] = useState<ClientUser[]>(mockUsers)
@@ -198,10 +198,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, currentView,
   }
 
   const addToCart = (product: Product) => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id)
+    setCart((prev: CartItem[]) => {
+      const existing = prev.find((item: CartItem) => item.product.id === product.id)
       if (existing) {
-        return prev.map((item) => (item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item))
+        return prev.map((item: CartItem) => (item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item))
       }
       return [...prev, { product, quantity: 1 }]
     })
@@ -210,14 +210,14 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, currentView,
 
   const updateCartQuantity = (productId: string, quantity: number) => {
     if (quantity <= 0) {
-      setCart((prev) => prev.filter((item) => item.product.id !== productId))
+      setCart((prev: CartItem[]) => prev.filter((item: CartItem) => item.product.id !== productId))
     } else {
-      setCart((prev) => prev.map((item) => (item.product.id === productId ? { ...item, quantity } : item)))
+      setCart((prev: CartItem[]) => prev.map((item: CartItem) => (item.product.id === productId ? { ...item, quantity } : item)))
     }
   }
 
   const getCartTotal = () => {
-    return cart.reduce((total, item) => total + item.product.price * item.quantity, 0)
+    return cart.reduce((total: number, item: CartItem) => total + item.product.price * item.quantity, 0)
   }
 
   const value: AppContextType = {
