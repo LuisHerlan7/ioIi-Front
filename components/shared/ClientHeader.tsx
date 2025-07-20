@@ -48,32 +48,32 @@ export const ClientHeader: React.FC = () => {
               <User size={22} className="md:w-6 md:h-6" />
             </button>
 
-            <button className="hidden md:block p-4 text-purple-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-2xl transition-all duration-300">
-              <Bell size={26} />
+            <button className="p-2 md:p-4 text-purple-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-2xl transition-all duration-300">
+              <Bell size={20} className="md:w-6 md:h-6" />
             </button>
 
-            <div className="hidden md:flex space-x-2">
+            <div className="flex space-x-1 md:space-x-2">
               <a
-                href="https://wa.me/1234567890"
+                href="https://wa.me/59165747121"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-4 text-purple-600 hover:text-green-600 hover:bg-green-50 rounded-2xl transition-all duration-300"
+                className="p-2 md:p-4 text-purple-600 hover:text-green-600 hover:bg-green-50 rounded-2xl transition-all duration-300"
               >
-                <Phone size={22} />
+                <Phone size={20} className="md:w-6 md:h-6" />
               </a>
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/lerbolario.bo/?utm_source=ig_web_button_share_sheet"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-4 text-purple-600 hover:text-pink-600 hover:bg-pink-50 rounded-2xl transition-all duration-300"
+                className="p-2 md:p-4 text-purple-600 hover:text-pink-600 hover:bg-pink-50 rounded-2xl transition-all duration-300"
               >
-                <Instagram size={22} />
+                <Instagram size={20} className="md:w-6 md:h-6" />
               </a>
             </div>
 
             <button
               onClick={logout}
-              className="text-xs md:text-sm text-purple-600 hover:text-red-600 font-bold transition-colors px-3 py-2 md:px-6 md:py-3 rounded-2xl hover:bg-red-50 border-2 border-purple-200 hover:border-red-200"
+              className="text-xs md:text-sm text-purple-600 hover:text-red-600 font-bold transition-colors px-2 py-2 md:px-6 md:py-3 rounded-2xl hover:bg-red-50 border-2 border-purple-200 hover:border-red-200"
             >
               <span className="hidden sm:inline">Salir</span>
               <span className="sm:hidden">X</span>
