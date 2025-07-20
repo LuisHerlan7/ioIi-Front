@@ -1,9 +1,24 @@
 "use client"
 
 import type React from "react"
-import { createContext, useContext, useState, type ReactNode } from "react"
-
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
+import { onAuthStateChanged, User as Firebaseuser } from "firebase/auth"
+import { auth, db } from "../backend/firebase"
+import { doc, getDoc } from "firebase/firestore"
 // Types
+export interface DatosUsuariosGoogle{
+  id: string,
+  nombre: string,
+  email: string,
+  photoURL: string,
+  celular:string,
+  dirección: string,
+  rol: "client"
+}
+export interface CompletarDatosGoogle {
+  celular: string,
+  dirección: string,
+}
 export interface ClientUser {
   id: string
   name: string
@@ -138,6 +153,8 @@ interface AppContextType {
   // State
   currentView: string
   userType: "client" | "admin" | null
+  datosUsuariosGoogle: DatosUsuariosGoogle | null
+  completarDatosGoogle: CompletarDatosGoogle | null
   currentUser: ClientUser | null
   users: ClientUser[]
   products: Product[]
@@ -159,6 +176,8 @@ interface AppContextType {
   addToCart: (product: Product) => void
   updateCartQuantity: (productId: string, quantity: number) => void
   getCartTotal: () => number
+  setUser: (user: DatosUsuariosGoogle) => void
+  setCompleteDatosGoogle: (datos: CompletarDatosGoogle) => void
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -185,13 +204,18 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, currentView,
   const [cart, setCart] = useState<CartItem[]>([])
   const [orders, setOrders] = useState<Order[]>(mockOrders)
   const [searchTerm, setSearchTerm] = useState("")
+  const [datosUsuariosGoogle, setDatosUsuariosGoogle] = useState<DatosUsuariosGoogle | null>(null)
+  const [completarDatosGoogle, setCompletarDatosGoogle] = useState<CompletarDatosGoogle | null>(null)
 
   const navigateTo = (view: string) => {
     setCurrentView(view)
   }
+  
 
   const logout = () => {
     setCurrentUser(null)
+    setDatosUsuariosGoogle(null)
+    setCompletarDatosGoogle(null)
     setUserType(null)
     setCart([])
     setCurrentView("home")
@@ -220,11 +244,33 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, currentView,
     return cart.reduce((total: number, item: CartItem) => total + item.product.price * item.quantity, 0)
   }
 
+  // Función para establecer usuario desde datos simplificados (ej: login Google)
+  const setUser = (user: DatosUsuariosGoogle) => {
+    const convertedUser: ClientUser = {
+      id: user.id,
+      name: user.nombre,
+      email: user.email,
+      password: "", // Puedes dejar vacío o un valor temporal
+      type: "client", // Cambia según tu lógica si es admin
+    }
+
+    setCurrentUser(convertedUser)
+    setDatosUsuariosGoogle(user)
+    setUserType("client") // O "admin" según corresponda
+  }
+  const setCompleteDatosGoogle = (datos: CompletarDatosGoogle) => {
+    setCompletarDatosGoogle(datos)
+    setUserType("client")
+  }
+
   const value: AppContextType = {
     // State
     currentView,
     userType,
     currentUser,
+    datosUsuariosGoogle,
+    completarDatosGoogle,
+    setCompleteDatosGoogle,
     users,
     products,
     cart,
@@ -245,7 +291,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, currentView,
     addToCart,
     updateCartQuantity,
     getCartTotal,
+
+    setUser, // Aquí incluyes la función setUser para que esté disponible en el contexto
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }
+
