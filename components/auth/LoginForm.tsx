@@ -2,8 +2,9 @@
 
 import type React from "react"
 import { useState } from "react"
-import { Eye, EyeOff, User, Mail, Lock, Sparkles } from "lucide-react"
+import { Eye, EyeOff, User, Mail, Lock, Sparkles, AlignCenter } from "lucide-react"
 import { useApp } from "../../context/AppContext"
+import GoogleLoginButton from "@/backend/authGoogle"
 
 interface LoginFormProps {
   type: "client" | "admin"
@@ -102,6 +103,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ type }) => {
           >
             Ingresar
           </button>
+          <p className="text-gray-600 text-sm" style={{ textAlign: "center" }}>O</p>
+          <div className="flex justify-center items-center h-screen bg-white-100" style={{ marginTop: "20px", height: "50px", width: "100%" }}>
+            <GoogleLoginButton />
+          </div>
         </form>
 
         {type === "client" && (
