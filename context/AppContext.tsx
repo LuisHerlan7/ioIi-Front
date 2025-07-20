@@ -1,139 +1,32 @@
 "use client"
 
 import type React from "react"
-import { createContext, useContext, useState, type ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { onAuthStateChanged, signOut, type User as FirebaseAuthUser } from "firebase/auth"
+import { doc, setDoc, getDoc, type DocumentData } from "firebase/firestore"
+import { auth, db } from "../backend/firebase"
 
-// Types
-export interface ClientUser {
-  id: string
-  name: string
-  email: string
-  password: string
-  type: "client" | "admin"
+import {
+  fetchProducts,
+  addProduct as addProductFirestore,
+  updateProduct as updateProductFirestore,
+  deleteProduct as deleteProductFirestore,
+  type Product,
+} from "../utils/firestoreProducts"
+import { fetchCart, saveCart, type Cart, type CartItem } from "../utils/firestoreCarts"
+import { uploadImageToCloudinary } from "../utils/cloudinaryUpload"
+
+// Interfaz para el usuario en el contexto
+export interface ClientUser extends DocumentData {
+  uid: string
+  name: string | null
+  email: string | null
+  photoURL: string | null
+  // Usamos 'type' aquí para el rol del usuario, consistente con el campo 'rol' en Firestore.
+  type: "client" | "admin" // O el rol que asignes
 }
 
-export interface Product {
-  id: string
-  name: string
-  price: number
-  image: string
-  description: string
-  category: string
-  stock: number
-  rating?: number
-}
-
-export interface CartItem {
-  product: Product
-  quantity: number
-}
-
-export interface Order {
-  id: string
-  clientId: string
-  clientName: string
-  items: CartItem[]
-  total: number
-  date: string
-  status: "pending" | "confirmed" | "delivered"
-}
-
-// Mock data for soap products
-const mockProducts: Product[] = [
-  {
-    id: "1",
-    name: "Jabón de Lavanda Premium",
-    price: 25,
-    image: "/placeholder.svg?height=300&width=300",
-    description: "Jabón artesanal con aceite esencial de lavanda orgánica, ideal para relajar y nutrir la piel",
-    category: "Jabones Aromáticos",
-    stock: 15,
-    rating: 4.9,
-  },
-  {
-    id: "2",
-    name: "Jabón de Rosa Mosqueta",
-    price: 32,
-    image: "/placeholder.svg?height=300&width=300",
-    description: "Enriquecido con aceite de rosa mosqueta, perfecto para pieles maduras y regeneración celular",
-    category: "Jabones Anti-edad",
-    stock: 8,
-    rating: 4.8,
-  },
-  {
-    id: "3",
-    name: "Jabón de Miel y Avena",
-    price: 28,
-    image: "/placeholder.svg?height=300&width=300",
-    description: "Suave exfoliante natural con miel pura y avena, ideal para pieles sensibles",
-    category: "Jabones Exfoliantes",
-    stock: 25,
-    rating: 4.7,
-  },
-  {
-    id: "4",
-    name: "Jabón de Aceite de Oliva",
-    price: 22,
-    image: "/placeholder.svg?height=300&width=300",
-    description: "Jabón tradicional con aceite de oliva virgen extra, hidratante y nutritivo",
-    category: "Jabones Hidratantes",
-    stock: 12,
-    rating: 4.6,
-  },
-  {
-    id: "5",
-    name: "Jabón de Carbón Activado",
-    price: 30,
-    image: "/placeholder.svg?height=300&width=300",
-    description: "Purificante y desintoxicante, ideal para pieles grasas y con impurezas",
-    category: "Jabones Purificantes",
-    stock: 18,
-    rating: 4.8,
-  },
-  {
-    id: "6",
-    name: "Jabón de Coco y Karité",
-    price: 26,
-    image: "/placeholder.svg?height=300&width=300",
-    description: "Ultra hidratante con manteca de karité y aceite de coco, para pieles muy secas",
-    category: "Jabones Hidratantes",
-    stock: 20,
-    rating: 4.9,
-  },
-]
-
-const mockUsers: ClientUser[] = [
-  {
-    id: "1",
-    name: "Admin",
-    email: "admin@lerbolario.com",
-    password: "admin123",
-    type: "admin",
-  },
-  {
-    id: "2",
-    name: "Cliente Demo",
-    email: "cliente@demo.com",
-    password: "cliente123",
-    type: "client",
-  },
-]
-
-const mockOrders: Order[] = [
-  {
-    id: "1",
-    clientId: "2",
-    clientName: "María González",
-    items: [
-      { product: mockProducts[0], quantity: 2 },
-      { product: mockProducts[2], quantity: 1 },
-    ],
-    total: 78,
-    date: "2024-01-15",
-    status: "confirmed",
-  },
-]
-
+// Interfaz para el contexto de la aplicación
 interface AppContextType {
   // State
   currentView: string
@@ -141,23 +34,32 @@ interface AppContextType {
   currentUser: ClientUser | null
   users: ClientUser[]
   products: Product[]
-  cart: CartItem[]
-  orders: Order[]
+  cart: Cart // Asegúrate de que sea de tipo 'Cart'
+  orders: any[]
   searchTerm: string
 
   // Actions
   setCurrentView: (view: string) => void
   navigateTo: (view: string) => void
-  logout: () => void
+  logout: () => Promise<void>
   setUserType: (type: "client" | "admin" | null) => void
   setCurrentUser: (user: ClientUser | null) => void
   setUsers: React.Dispatch<React.SetStateAction<ClientUser[]>>
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>
-  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>
-  setOrders: React.Dispatch<React.SetStateAction<Order[]>>
+  setCart: React.Dispatch<React.SetStateAction<Cart>> // Asegúrate de que sea de tipo 'Cart'
+  setOrders: React.Dispatch<React.SetStateAction<any[]>>
   setSearchTerm: (term: string) => void
-  addToCart: (product: Product) => void
-  updateCartQuantity: (productId: string, quantity: number) => void
+
+  // Funciones CRUD de productos que interactúan con Firestore y Cloudinary
+  addProduct: (product: Omit<Product, "id">, imageFile?: File) => Promise<void>
+  updateProduct: (product: Product, imageFile?: File) => Promise<void>
+  deleteProduct: (id: string) => Promise<void>
+
+  // Funciones de carrito que interactúan con Firestore
+  addToCart: (productId: string, quantity: number) => Promise<void>
+  updateCartItemQuantity: (productId: string, quantity: number) => Promise<void>
+  removeCartItem: (productId: string) => Promise<void>
+  clearCart: () => Promise<void>
   getCartTotal: () => number
 }
 
@@ -177,47 +79,245 @@ interface AppProviderProps {
   setCurrentView: (view: string) => void
 }
 
-export const AppProvider: React.FC<AppProviderProps> = ({ children, currentView, setCurrentView }: AppProviderProps) => {
+export const AppProvider: React.FC<AppProviderProps> = ({
+  children,
+  currentView,
+  setCurrentView,
+}: AppProviderProps) => {
   const [userType, setUserType] = useState<"client" | "admin" | null>(null)
   const [currentUser, setCurrentUser] = useState<ClientUser | null>(null)
-  const [users, setUsers] = useState<ClientUser[]>(mockUsers)
-  const [products, setProducts] = useState<Product[]>(mockProducts)
-  const [cart, setCart] = useState<CartItem[]>([])
-  const [orders, setOrders] = useState<Order[]>(mockOrders)
+  const [users, setUsers] = useState<ClientUser[]>([])
+  const [products, setProducts] = useState<Product[]>([])
+  const [cart, setCart] = useState<Cart>({ userId: "", items: [] }) // Inicializar con estructura de Cart
+  const [orders, setOrders] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")
 
   const navigateTo = (view: string) => {
     setCurrentView(view)
   }
 
-  const logout = () => {
-    setCurrentUser(null)
-    setUserType(null)
-    setCart([])
-    setCurrentView("home")
-  }
+  // Función para guardar/actualizar datos del usuario en Firestore
+  const guardarDatosUsuario = async (user: FirebaseAuthUser) => {
+    if (!user || !user.uid) return
 
-  const addToCart = (product: Product) => {
-    setCart((prev: CartItem[]) => {
-      const existing = prev.find((item: CartItem) => item.product.id === product.id)
-      if (existing) {
-        return prev.map((item: CartItem) => (item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item))
+    try {
+      const userRef = doc(db, "users", user.uid)
+      const userSnap = await getDoc(userRef)
+
+      if (userSnap.exists()) {
+        const data = userSnap.data()
+        await setDoc(
+          userRef,
+          {
+            name: user.displayName || data.name,
+            email: user.email || data.email,
+            photoURL: user.photoURL || data.photoURL,
+            emailVerified: user.emailVerified,
+            updatedAt: new Date().toISOString(),
+          },
+          { merge: true },
+        )
+        console.log("Usuario registrado y datos actualizados en Firestore.")
+        setCurrentUser({
+          uid: user.uid,
+          name: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          type: data.type || data.rol || "client", // Usa 'type' o 'rol' de Firestore
+        })
+        setUserType(data.type || data.rol || "client") // Usa 'type' o 'rol' de Firestore
+      } else {
+        await setDoc(userRef, {
+          uid: user.uid,
+          name: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          emailVerified: user.emailVerified,
+          type: "client", // Asigna un rol por defecto
+          createdAt: new Date().toISOString(),
+        })
+        console.log("Nuevo usuario guardado en Firestore.")
+        setCurrentUser({
+          uid: user.uid,
+          name: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          type: "client",
+        })
+        setUserType("client")
       }
-      return [...prev, { product, quantity: 1 }]
-    })
-    navigateTo("cart")
+    } catch (error) {
+      console.error("Error guardando usuario en Firestore:", error)
+    }
   }
 
-  const updateCartQuantity = (productId: string, quantity: number) => {
-    if (quantity <= 0) {
-      setCart((prev: CartItem[]) => prev.filter((item: CartItem) => item.product.id !== productId))
+  // Listener de autenticación de Firebase
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        await guardarDatosUsuario(user)
+      } else {
+        setCurrentUser(null)
+        setUserType(null)
+        setCart({ userId: "", items: [] })
+        console.log("Usuario deslogueado.")
+      }
+    })
+    return () => unsubscribe()
+  }, [])
+
+  // Función de logout que usa Firebase Auth
+  const logout = async () => {
+    try {
+      await signOut(auth)
+      navigateTo("home")
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error)
+    }
+  }
+
+  // Cargar productos al iniciar la aplicación
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const fetchedProducts = await fetchProducts()
+        setProducts(fetchedProducts)
+      } catch (error) {
+        console.error("Fallo al cargar productos:", error)
+      }
+    }
+    loadProducts()
+  }, [])
+
+  // Cargar carrito del usuario actual cuando el usuario cambia
+  useEffect(() => {
+    const loadCart = async () => {
+      if (currentUser?.uid) {
+        try {
+          const fetchedCart = await fetchCart(currentUser.uid)
+          setCart(fetchedCart)
+        } catch (error) {
+          console.error("Fallo al cargar el carrito:", error)
+        }
+      } else {
+        setCart({ userId: "", items: [] })
+      }
+    }
+    loadCart()
+  }, [currentUser?.uid])
+
+  // Funciones CRUD de Productos (integrando Firestore y Cloudinary)
+  const addProduct = async (product: Omit<Product, "id">, imageFile?: File) => {
+    try {
+      let imageUrl = product.image
+      if (imageFile) {
+        imageUrl = await uploadImageToCloudinary(imageFile)
+      }
+      await addProductFirestore({ ...product, image: imageUrl })
+      setProducts(await fetchProducts())
+    } catch (error) {
+      console.error("Error en addProduct (context):", error)
+      throw error
+    }
+  }
+
+  const updateProduct = async (product: Product, imageFile?: File) => {
+    try {
+      let imageUrl = product.image
+      if (imageFile) {
+        imageUrl = await uploadImageToCloudinary(imageFile)
+      }
+      await updateProductFirestore({ ...product, image: imageUrl })
+      setProducts(await fetchProducts())
+    } catch (error) {
+      console.error("Error en updateProduct (context):", error)
+      throw error
+    }
+  }
+
+  const deleteProduct = async (id: string) => {
+    try {
+      await deleteProductFirestore(id)
+      setProducts(await fetchProducts())
+    } catch (error) {
+      console.error("Error al eliminar producto en el contexto:", error)
+      throw error
+    }
+  }
+
+  // Funciones de Carrito (integrando Firestore)
+  const addToCart = async (productId: string, quantity: number) => {
+    if (!currentUser?.uid) {
+      console.warn("No hay usuario logueado para añadir al carrito.")
+      return
+    }
+
+    const existingItemIndex = cart.items.findIndex((item) => item.productId === productId)
+    let updatedItems: CartItem[]
+
+    if (existingItemIndex > -1) {
+      updatedItems = cart.items.map((item, index) =>
+        index === existingItemIndex ? { ...item, quantity: item.quantity + quantity } : item,
+      )
     } else {
-      setCart((prev: CartItem[]) => prev.map((item: CartItem) => (item.product.id === productId ? { ...item, quantity } : item)))
+      updatedItems = [...cart.items, { productId, quantity }]
+    }
+
+    try {
+      await saveCart(currentUser.uid, updatedItems)
+      setCart({ ...cart, items: updatedItems })
+    } catch (error) {
+      console.error("Error al añadir al carrito:", error)
+      throw error
+    }
+  }
+
+  const updateCartItemQuantity = async (productId: string, quantity: number) => {
+    if (!currentUser?.uid) return
+
+    const updatedItems = cart.items
+      .map((item) => (item.productId === productId ? { ...item, quantity } : item))
+      .filter((item) => item.quantity > 0)
+
+    try {
+      await saveCart(currentUser.uid, updatedItems)
+      setCart({ ...cart, items: updatedItems })
+    } catch (error) {
+      console.error("Error al actualizar cantidad del carrito:", error)
+      throw error
+    }
+  }
+
+  const removeCartItem = async (productId: string) => {
+    if (!currentUser?.uid) return
+
+    const updatedItems = cart.items.filter((item) => item.productId !== productId)
+    try {
+      await saveCart(currentUser.uid, updatedItems)
+      setCart({ ...cart, items: updatedItems })
+    } catch (error) {
+      console.error("Error al eliminar ítem del carrito:", error)
+      throw error
+    }
+  }
+
+  const clearCart = async () => {
+    if (!currentUser?.uid) return
+
+    try {
+      await saveCart(currentUser.uid, [])
+      setCart({ ...cart, items: [] })
+    } catch (error) {
+      console.error("Error al vaciar el carrito:", error)
+      throw error
     }
   }
 
   const getCartTotal = () => {
-    return cart.reduce((total: number, item: CartItem) => total + item.product.price * item.quantity, 0)
+    return cart.items.reduce((total: number, item: CartItem) => {
+      const product = products.find((p) => p.id === item.productId)
+      return total + (product ? product.price * item.quantity : 0)
+    }, 0)
   }
 
   const value: AppContextType = {
@@ -230,7 +330,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, currentView,
     cart,
     orders,
     searchTerm,
-
     // Actions
     setCurrentView,
     navigateTo,
@@ -242,8 +341,13 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children, currentView,
     setCart,
     setOrders,
     setSearchTerm,
+    addProduct,
+    updateProduct,
+    deleteProduct,
     addToCart,
-    updateCartQuantity,
+    updateCartItemQuantity,
+    removeCartItem,
+    clearCart,
     getCartTotal,
   }
 
