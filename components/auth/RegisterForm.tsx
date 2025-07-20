@@ -3,7 +3,8 @@
 import type React from "react"
 import { useState } from "react"
 import { Plus } from "lucide-react"
-import { useApp } from "../../context/AppContext"
+import { ClientUser, useApp } from "../../context/AppContext"
+import RegistrarButton from "@/backend/crearCuenta"
 
 export const RegisterForm: React.FC = () => {
   const { users, setUsers, setCurrentUser, setUserType, navigateTo } = useApp()
@@ -38,6 +39,11 @@ export const RegisterForm: React.FC = () => {
     setCurrentUser(newUser)
     setUserType("client")
     navigateTo("catalog")
+  }
+
+  function registrarNormal(users: ClientUser[]): void {
+    // Simulate registration logic, e.g., logging users or sending to backend
+    console.log("Registrando usuarios:", users)
   }
 
   return (
@@ -105,9 +111,9 @@ export const RegisterForm: React.FC = () => {
           )}
 
           <button
-            type="submit"
+          type="button"
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-          >
+             onClick={() => registrarNormal(users)}>
             Crear cuenta
           </button>
         </form>
