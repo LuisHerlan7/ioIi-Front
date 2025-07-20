@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { ShoppingCart, Package, Sparkles, Leaf, Heart, Award, Phone, Instagram } from "lucide-react"
+import { ShoppingCart, Package, Sparkles, Leaf, Heart, Award, Phone, Instagram, Facebook } from "lucide-react"
 import { useApp } from "../../context/AppContext"
 
 export const HomePage: React.FC = () => {
@@ -19,7 +19,7 @@ export const HomePage: React.FC = () => {
           <div className="text-center mb-16">
             <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-100 to-pink-100 border border-purple-200 rounded-full text-purple-800 text-sm font-semibold mb-8 shadow-lg backdrop-blur-sm">
               <Leaf size={18} className="mr-2" />
-              Cosmética Natural Premium • Desde 1946
+              Cosmética Natural Premium 
             </div>
 
             <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 relative">
@@ -28,7 +28,7 @@ export const HomePage: React.FC = () => {
               </span>
               <div className="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full animate-pulse"></div>
             </h1>
-
+            <img src="/logoJabones.png" alt="Hero" className="mx-auto mb-6" />
             <p className="text-lg sm:text-xl md:text-2xl text-gray-700 mb-6 md:mb-8 max-w-3xl mx-auto leading-relaxed font-light px-4">
               Descubre la magia de la naturaleza italiana en cada jabón artesanal.
               <span className="font-semibold text-purple-700"> Ingredientes puros, tradición auténtica.</span>
@@ -116,20 +116,39 @@ export const HomePage: React.FC = () => {
           <p className="text-xl mb-8 text-purple-100">Síguenos para tips de belleza y ofertas exclusivas</p>
           <div className="flex justify-center space-x-6">
             <a
-              href="https://wa.me/1234567890"
+              href="https://wa.me/77417175"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl hover:bg-white/30 transition-all duration-300 transform hover:scale-110"
             >
-              <Phone size={28} />
+              <img src="/whatsapp.png" alt="WhatsApp" className="w-7 h-7" />
             </a>
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/lerbolario.bo"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl hover:bg-white/30 transition-all duration-300 transform hover:scale-110"
             >
-              <Instagram size={28} />
+
+              <Instagram size={28}  />
+              
+            </a>
+            <a
+              href="https://www.facebook.com/profile.php?id=61578687236593&sk=mentions"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl hover:bg-white/30 transition-all duration-300 transform hover:scale-110"
+            >
+              <Facebook size={28} />
+            </a>
+            <a
+              href="https://www.tiktok.com/@lerbolario.bo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl
+  hover:bg-white/30 transition-all duration-300 transform hover:scale-110"
+            >
+              <img src="/tik-tok.png" alt="TikTok" className="w-7 h-7" />
             </a>
           </div>
         </div>
