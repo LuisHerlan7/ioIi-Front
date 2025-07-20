@@ -21,6 +21,17 @@ export interface CompletarDatosGoogle {
   dirección: string,
 }
 
+export interface DatosCliente{
+  id: string,
+  nombre: string,
+  email: string,
+  celular: string,
+  dirección: string,
+  fotoURL: string
+  type: "client" | "admin"
+}
+
+
 import {
   fetchProducts,
   addProduct as addProductFirestore,
@@ -48,6 +59,7 @@ interface AppContextType {
   userType: "client" | "admin" | null
   datosUsuariosGoogle: DatosUsuariosGoogle | null
   completarDatosGoogle: CompletarDatosGoogle | null
+  datosCliente: DatosCliente | null
   currentUser: ClientUser | null
   users: ClientUser[]
   products: Product[]
@@ -80,6 +92,7 @@ interface AppContextType {
   getCartTotal: () => number
   setUser: (user: DatosUsuariosGoogle) => void
   setCompleteDatosGoogle: (datos: CompletarDatosGoogle) => void
+  setDatosCliente: (datos: DatosCliente) => void 
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -112,6 +125,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({
   const [searchTerm, setSearchTerm] = useState("")
   const [datosUsuariosGoogle, setDatosUsuariosGoogle] = useState<DatosUsuariosGoogle | null>(null)
   const [completarDatosGoogle, setCompletarDatosGoogle] = useState<CompletarDatosGoogle | null>(null)
+  const [datosCliente, setDatosCliente] = useState<DatosCliente | null>(null)
 
   const navigateTo = (view: string) => {
     setCurrentView(view)
@@ -175,6 +189,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({
     setCurrentUser(null)
     setDatosUsuariosGoogle(null)
     setCompletarDatosGoogle(null)
+    setDatosCliente(null)
     setUserType(null)
     setCart([])
     setCurrentView("home")
@@ -368,6 +383,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({
     setCompletarDatosGoogle(datos)
     setUserType("client")
   }
+  const setDateCliente = (datos: DatosCliente) => {
+    setDatosCliente(datos)
+    setUserType("client")
+  }
 
   const value: AppContextType = {
     // State
@@ -377,6 +396,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({
     datosUsuariosGoogle,
     completarDatosGoogle,
     setCompleteDatosGoogle,
+    datosCliente,
+    setDatosCliente,
     users,
     products,
     cart,
