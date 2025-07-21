@@ -1,11 +1,22 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, type ChangeEvent } from "react"
 import { Plus, Edit2, Trash2 } from "lucide-react"
 import { useApp } from "../../context/AppContext"
 import { AdminHeader } from "./AdminHeader"
+import type { Product } from "../../utils/firestoreProducts"
 
+
+// Interfaz para el estado del nuevo producto/producto en edición
+interface ProductFormState {
+  name: string
+  price: number
+  description: string
+  category: string
+  stock: number
+  image: string // Para la URL de la imagen
+}
 export const AdminProducts: React.FC = () => {
   const { products, setProducts, navigateTo } = useApp()
   const [isAddingProduct, setIsAddingProduct] = useState(false)
@@ -18,6 +29,19 @@ export const AdminProducts: React.FC = () => {
     stock: 0,
     image: "",
   })
+
+  const [newProductImageFile, setNewProductImageFile] = useState<File | null>(null)
+  const [editingProductImageFile, setEditingProductImageFile] = useState<File | null>(null)
+
+  const handleImageFileChange = (e: ChangeEvent<HTMLInputElement>, type: "new" | "edit") => {
+    if (e.target.files && e.target.files[0]) {
+      if (type === "new") {
+        setNewProductImageFile(e.target.files[0])
+      } else {
+        setEditingProductImageFile(e.target.files[0])
+      }
+    }
+  }
 
   const addProduct = () => {
     const product = {
