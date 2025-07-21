@@ -1,5 +1,9 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { onAuthStateChanged } from "firebase/auth"
+import { doc, getDoc } from "firebase/firestore"
+import { auth, db } from "@/backend/firebase"
+
 import { HomePage } from "../components/home/HomePage"
 import { LoginForm } from "../components/auth/LoginForm"
 import { RegisterForm } from "../components/auth/RegisterForm"
@@ -12,11 +16,51 @@ import { AdminReports } from "../components/admin/AdminReports"
 import { AdminProducts } from "../components/admin/AdminProducts"
 import { AdminOrders } from "../components/admin/AdminOrders"
 import { AppProvider } from "../context/AppContext"
-import {CompletedRegisterForm} from "../components/auth/CompletarRegistro"
+import { CompletedRegisterForm } from "../components/auth/CompletarRegistro"
 
-// Main App Component
 export default function ECommerceApp() {
-  const [currentView, setCurrentView] = useState<string>("home")
+  const [currentView, setCurrentView] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("currentView") || "home"
+    }
+    return "home"
+  })
+
+  const [initialLoading, setInitialLoading] = useState(true)
+
+  useEffect(() => {
+    // Persistir la vista
+    if (typeof window !== "undefined") {
+      localStorage.setItem("currentView", currentView)
+    }
+  }, [currentView])
+
+  useEffect(() => {
+    // Restaurar sesión Firebase
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const userRef = doc(db, "users", firebaseUser.uid)
+        const userSnap = await getDoc(userRef)
+
+        if (userSnap.exists()) {
+          const data = userSnap.data()
+          const rol = data.rol ?? "cliente"
+
+          if (rol === "cliente") {
+            setCurrentView("catalog")
+          } else {
+            setCurrentView("no-autorizado") // Si tienes esta vista
+          }
+        } else {
+          setCurrentView("completar-registro")
+        }
+      }
+
+      setInitialLoading(false)
+    })
+
+    return () => unsubscribe()
+  }, [])
 
   const renderCurrentView = () => {
     switch (currentView) {
@@ -46,9 +90,15 @@ export default function ECommerceApp() {
         return <AdminOrders />
       case "completar-registro":
         return <CompletedRegisterForm />
+      case "no-autorizado":
+        return <div>No tienes autorización para acceder a esta página</div>
       default:
         return <HomePage />
     }
+  }
+
+  if (initialLoading) {
+    return <div className="text-center mt-10">Cargando sesión...</div>
   }
 
   return (

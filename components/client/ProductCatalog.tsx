@@ -58,9 +58,14 @@ export const ProductCatalog: React.FC = () => {
                 <Filter size={20} />
                 <span className="hidden sm:inline">Filtros</span>
               </button>
-              <button className="px-4 md:px-6 py-3 md:py-4 bg-white/80 backdrop-blur-lg border-2 border-purple-200 rounded-2xl hover:bg-white hover:shadow-xl hover:border-purple-300 transition-all duration-300 text-purple-700">
-                <Grid size={20} />
-              </button>
+              <button
+                type="button"
+                title="Buscar"
+                className="px-4 md:px-6 py-3 md:py-4 bg-white/80 backdrop-blur-lg border-2 border-purple-600 rounded-lg"
+                          >
+                          <Grid size={20} />
+                  </button>
+
             </div>
           </div>
         </div>
@@ -103,9 +108,16 @@ export const ProductCatalog: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-purple-900/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
                 <div className="absolute top-4 right-4">
-                  <button className="p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-xl hover:bg-white hover:scale-110 transition-all duration-300 group">
-                    <Heart size={20} className="text-purple-600 group-hover:text-red-500 group-hover:fill-current" />
-                  </button>
+                  <button
+                  type="button"
+                  title="Agregar a favoritos"
+                  className="p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-xl hover:bg-white hover:scale-110 transition-all duration-300 group"
+                  >
+                <Heart
+                  size={20}
+                 className="text-purple-600 group-hover:text-red-500 group-hover:fill-current"
+                  />
+                </button>
                 </div>
 
                 {product.stock < 10 && (
@@ -150,9 +162,10 @@ export const ProductCatalog: React.FC = () => {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                   <div>
                     <span className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
-                      ${product.price}
-                    </span>
-                    <span className="text-gray-500 text-xs md:text-sm ml-1 md:ml-2">USD</span>
+                      {product.price} Bs
+                        </span>
+
+                    <span className="text-gray-500 text-xs md:text-sm ml-1 md:ml-2"></span>
                   </div>
                   <button
                     onClick={() => addToCart(product)}
