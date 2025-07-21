@@ -114,38 +114,41 @@ export const HomePage: React.FC = () => {
         <div className="bg-gradient-to-r from-purple-600 via-violet-600 to-purple-700 rounded-3xl p-12 text-white text-center shadow-2xl">
           <h3 className="text-3xl font-bold mb-6">Conecta con nosotros</h3>
           <p className="text-xl mb-8 text-purple-100">Síguenos para tips de belleza y ofertas exclusivas</p>
-          <div className="flex justify-center space-x-4 md:space-x-6">
+          <div className="flex justify-center space-x-6">
             <a
               href="https://wa.me/77417175"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white/20 backdrop-blur-sm p-3 md:p-4 rounded-2xl hover:bg-white/30 transition-all duration-300 transform hover:scale-110 flex items-center justify-center"
+              className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl hover:bg-white/30 transition-all duration-300 transform hover:scale-110"
             >
-              <img src="/whatsapp.png" alt="WhatsApp" className="w-6 h-6 md:w-7 md:h-7 object-contain" />
+              <img src="/whatsapp.png" alt="WhatsApp" className="w-7 h-7" />
             </a>
             <a
               href="https://www.instagram.com/lerbolario.bo"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white/20 backdrop-blur-sm p-3 md:p-4 rounded-2xl hover:bg-white/30 transition-all duration-300 transform hover:scale-110 flex items-center justify-center"
+              className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl hover:bg-white/30 transition-all duration-300 transform hover:scale-110"
             >
-              <Instagram size={24} className="md:w-7 md:h-7" />
+
+              <Instagram size={28}  />
+              
             </a>
             <a
-              href="https://www.facebook.com/profile.php?id=61578687236593&,ibextid=ZbWKwL"
+              href="https://www.facebook.com/profile.php?id=61578687236593&sk=mentions"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white/20 backdrop-blur-sm p-3 md:p-4 rounded-2xl hover:bg-white/30 transition-all duration-300 transform hover:scale-110 flex items-center justify-center"
+              className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl hover:bg-white/30 transition-all duration-300 transform hover:scale-110"
             >
-              <Facebook size={24} className="md:w-7 md:h-7" />
+              <Facebook size={28} />
             </a>
             <a
               href="https://www.tiktok.com/@lerbolario.bo"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white/20 backdrop-blur-sm p-3 md:p-4 rounded-2xl hover:bg-white/30 transition-all duration-300 transform hover:scale-110 flex items-center justify-center"
+              className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl
+  hover:bg-white/30 transition-all duration-300 transform hover:scale-110"
             >
-              <img src="/tik-tok.png" alt="TikTok" className="w-6 h-6 md:w-7 md:h-7 object-contain" />
+              <img src="/tik-tok.png" alt="TikTok" className="w-7 h-7" />
             </a>
           </div>
         </div>

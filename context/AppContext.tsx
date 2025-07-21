@@ -6,21 +6,6 @@ import { onAuthStateChanged, signOut, type User as FirebaseAuthUser } from "fire
 import { doc, setDoc, getDoc, type DocumentData } from "firebase/firestore"
 import { auth, db } from "../backend/firebase"
 
-// Types
-export interface DatosUsuariosGoogle{
-  id: string,
-  nombre: string,
-  email: string,
-  photoURL: string,
-  celular:string,
-  dirección: string,
-  rol: "client"
-}
-export interface CompletarDatosGoogle {
-  celular: string,
-  dirección: string,
-}
-
 import {
   fetchProducts,
   addProduct as addProductFirestore,
@@ -46,8 +31,6 @@ interface AppContextType {
   // State
   currentView: string
   userType: "client" | "admin" | null
-  datosUsuariosGoogle: DatosUsuariosGoogle | null
-  completarDatosGoogle: CompletarDatosGoogle | null
   currentUser: ClientUser | null
   users: ClientUser[]
   products: Product[]
@@ -78,8 +61,6 @@ interface AppContextType {
   removeCartItem: (productId: string) => Promise<void>
   clearCart: () => Promise<void>
   getCartTotal: () => number
-  setUser: (user: DatosUsuariosGoogle) => void
-  setCompleteDatosGoogle: (datos: CompletarDatosGoogle) => void
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -110,13 +91,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({
   const [cart, setCart] = useState<Cart>({ userId: "", items: [] }) // Inicializar con estructura de Cart
   const [orders, setOrders] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [datosUsuariosGoogle, setDatosUsuariosGoogle] = useState<DatosUsuariosGoogle | null>(null)
-  const [completarDatosGoogle, setCompletarDatosGoogle] = useState<CompletarDatosGoogle | null>(null)
 
   const navigateTo = (view: string) => {
     setCurrentView(view)
   }
-  
+
   // Función para guardar/actualizar datos del usuario en Firestore
   const guardarDatosUsuario = async (user: FirebaseAuthUser) => {
     if (!user || !user.uid) return
@@ -170,15 +149,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({
     } catch (error) {
       console.error("Error guardando usuario en Firestore:", error)
     }
-
-  const logout = () => {
-    setCurrentUser(null)
-    setDatosUsuariosGoogle(null)
-    setCompletarDatosGoogle(null)
-    setUserType(null)
-    setCart([])
-    setCurrentView("home")
-
   }
 
   // Listener de autenticación de Firebase
@@ -350,33 +320,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({
     }, 0)
   }
 
-  // Función para establecer usuario desde datos simplificados (ej: login Google)
-  const setUser = (user: DatosUsuariosGoogle) => {
-    const convertedUser: ClientUser = {
-      id: user.id,
-      name: user.nombre,
-      email: user.email,
-      password: "", // Puedes dejar vacío o un valor temporal
-      type: "client", // Cambia según tu lógica si es admin
-    }
-
-    setCurrentUser(convertedUser)
-    setDatosUsuariosGoogle(user)
-    setUserType("client") // O "admin" según corresponda
-  }
-  const setCompleteDatosGoogle = (datos: CompletarDatosGoogle) => {
-    setCompletarDatosGoogle(datos)
-    setUserType("client")
-  }
-
   const value: AppContextType = {
     // State
     currentView,
     userType,
     currentUser,
-    datosUsuariosGoogle,
-    completarDatosGoogle,
-    setCompleteDatosGoogle,
     users,
     products,
     cart,
@@ -401,10 +349,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({
     removeCartItem,
     clearCart,
     getCartTotal,
-
-    setUser, // Aquí incluyes la función setUser para que esté disponible en el contexto
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }
-
