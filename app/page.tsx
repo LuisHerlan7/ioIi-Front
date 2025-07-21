@@ -11,7 +11,7 @@ import { AdminDashboard } from "../components/admin/AdminDashboard"
 import { AdminReports } from "../components/admin/AdminReports"
 import { AdminProducts } from "../components/admin/AdminProducts"
 import { AdminOrders } from "../components/admin/AdminOrders"
-import { AppProvider } from "../context/AppContext"
+import { AppProvider } from "@/context/AppContext"
 import {CompletedRegisterForm} from "../components/auth/CompletarRegistro"
 
 // Main App Component

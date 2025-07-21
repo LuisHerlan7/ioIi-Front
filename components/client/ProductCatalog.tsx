@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { Search, Star, Heart, Sparkles, Filter, Grid, Leaf } from "lucide-react"
-import { useApp } from "../../context/AppContext"
+import { useApp } from "@/context/AppContext"
 import { ClientHeader } from "../shared/ClientHeader"
 
 export const ProductCatalog: React.FC = () => {

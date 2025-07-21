@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { Plus } from "lucide-react"
-import { ClientUser, useApp } from "../../context/AppContext"
+import { ClientUser, useApp } from "@/context/AppContext"
 import RegistrarButton from "@/backend/crearCuenta"
 
 export const RegisterForm: React.FC = () => {

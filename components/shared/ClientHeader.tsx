@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { ShoppingCart, User, Phone, Instagram, Bell } from "lucide-react"
-import { useApp } from "../../context/AppContext"
+import { useApp } from "@/context/AppContext"
 import Image from "next/image"
 
 export const ClientHeader: React.FC = () => {
