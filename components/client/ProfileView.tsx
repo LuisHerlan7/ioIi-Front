@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { Edit2, User } from "lucide-react"
-import { useApp } from "../../context/AppContext"
+import { useApp } from "@/context/AppContext"
 import { ClientHeader } from "../shared/ClientHeader"
 
 export const ProfileView: React.FC = () => {

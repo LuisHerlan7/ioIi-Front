@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useApp } from "../../context/AppContext"
+import { useApp } from "@/context/AppContext"
 import { AdminHeader } from "./AdminHeader"
 
 export const AdminOrders: React.FC = () => {

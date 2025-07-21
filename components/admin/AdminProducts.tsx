@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { Plus, Edit2, Trash2 } from "lucide-react"
-import { useApp } from "../../context/AppContext"
+import { useApp } from "@/context/AppContext"
 import { AdminHeader } from "./AdminHeader"
 
 export const AdminProducts: React.FC = () => {

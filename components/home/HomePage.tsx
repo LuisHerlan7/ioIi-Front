@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { ShoppingCart, Package, Sparkles, Leaf, Heart, Award, Phone, Instagram, Facebook } from "lucide-react"
-import { useApp } from "../../context/AppContext"
+import { useApp } from "@/context/AppContext"
 
 export const HomePage: React.FC = () => {
   const { navigateTo } = useApp()

@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { ShoppingCart, User, Phone, Instagram, Bell, Sparkles } from "lucide-react"
-import { useApp } from "../../context/AppContext"
+import { useApp } from "@/context/AppContext"
 
 export const ClientHeader: React.FC = () => {
   const { cart, navigateTo, logout } = useApp()

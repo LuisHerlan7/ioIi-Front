@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { Eye, EyeOff, User, Mail, Lock, Sparkles, AlignCenter } from "lucide-react"
-import { useApp } from "../../context/AppContext"
+import { useApp } from "@/context/AppContext"
 import GoogleLoginButton from "@/backend/authGoogle"
 
 interface LoginFormProps {

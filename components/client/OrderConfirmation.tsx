@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useApp } from "../../context/AppContext"
+import { useApp } from "@/context/AppContext"
 import { ClientHeader } from "../shared/ClientHeader"
 
 export const OrderConfirmation: React.FC = () => {

@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { ShoppingCart, Trash2 } from "lucide-react"
-import { useApp } from "../../context/AppContext"
+import { useApp } from "@/context/AppContext"
 import { ClientHeader } from "../shared/ClientHeader"
 
 export const CartView: React.FC = () => {

@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useApp } from "../../context/AppContext"
+import { useApp } from "@/context/AppContext"
 
 export const AdminHeader: React.FC = () => {
   const { currentUser, logout } = useApp()

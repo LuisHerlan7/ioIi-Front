@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { BarChart3, FileText } from "lucide-react"
-import { useApp } from "../../context/AppContext"
+import { useApp } from "@/context/AppContext"
 import { AdminHeader } from "./AdminHeader"
 
 export const AdminReports: React.FC = () => {

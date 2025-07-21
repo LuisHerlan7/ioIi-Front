@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { doc, setDoc } from "firebase/firestore"
 import { db } from "@/backend/firebase"
-import { useApp } from "../context/AppContext"
+import { useApp } from "@/context/AppContext"
 
 type Props = {
   datosUsuario: {
