@@ -1,8 +1,9 @@
 "use client"
 
 import type React from "react"
-import { ShoppingCart, User, Phone, Instagram, Bell, Sparkles } from "lucide-react"
+import { ShoppingCart, User, Phone, Instagram, Bell } from "lucide-react"
 import { useApp } from "../../context/AppContext"
+import Image from "next/image"
 
 export const ClientHeader: React.FC = () => {
   const { cart, navigateTo, logout } = useApp()
@@ -12,8 +13,14 @@ export const ClientHeader: React.FC = () => {
       <div className="container mx-auto px-4 py-4 md:py-6">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-2 md:space-x-4 cursor-pointer group" onClick={() => navigateTo("catalog")}>
-            <div className="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-purple-600 via-violet-600 to-purple-700 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300">
-              <Sparkles className="text-white" size={20} />
+            <div className="w-10 h-10 md:w-14 md:h-14 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+              <Image 
+                src="/logoJabones.png" 
+                alt="L'ERBOLARIO Logo" 
+                width={56} 
+                height={56} 
+                className="w-full h-full object-cover"
+              />
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 via-violet-600 to-purple-800 bg-clip-text text-transparent group-hover:from-purple-700 group-hover:via-violet-700 group-hover:to-purple-900 transition-all duration-300">
