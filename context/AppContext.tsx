@@ -184,16 +184,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({
     } catch (error) {
       console.error("Error guardando usuario en Firestore:", error)
     }
-
-  const logout = () => {
-    setCurrentUser(null)
-    setDatosUsuariosGoogle(null)
-    setCompletarDatosGoogle(null)
-    setDatosCliente(null)
-    setUserType(null)
-    setCart([])
-    setCurrentView("home")
-
   }
 
   // Listener de autenticación de Firebase
@@ -213,6 +203,12 @@ export const AppProvider: React.FC<AppProviderProps> = ({
 
   // Función de logout que usa Firebase Auth
   const logout = async () => {
+    setCurrentUser(null)
+    setDatosUsuariosGoogle(null)
+    setCompletarDatosGoogle(null)
+    setDatosCliente(null)
+    setUserType(null)
+    setCurrentView("home")
     try {
       await signOut(auth)
       navigateTo("home")
@@ -368,12 +364,14 @@ export const AppProvider: React.FC<AppProviderProps> = ({
   // Función para establecer usuario desde datos simplificados (ej: login Google)
   const setUser = (user: DatosUsuariosGoogle) => {
     const convertedUser: ClientUser = {
-      id: user.id,
+      uid: user.id,
       name: user.nombre,
       email: user.email,
+      photoURL: user.photoURL,
       password: "", // Puedes dejar vacío o un valor temporal
       type: "client", // Cambia según tu lógica si es admin
-    }
+    };
+  
 
     setCurrentUser(convertedUser)
     setDatosUsuariosGoogle(user)
@@ -387,6 +385,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({
     setDatosCliente(datos)
     setUserType("client")
   }
+
 
   const value: AppContextType = {
     // State
@@ -422,7 +421,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({
     removeCartItem,
     clearCart,
     getCartTotal,
-
     setUser, // Aquí incluyes la función setUser para que esté disponible en el contexto
   }
 
