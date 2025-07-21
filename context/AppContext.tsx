@@ -25,7 +25,41 @@ export interface ClientUser extends DocumentData {
   // Usamos 'type' aquí para el rol del usuario, consistente con el campo 'rol' en Firestore.
   type: "client" | "admin" // O el rol que asignes
 }
+// Nuevos tipos de usuario extendidos (Codigo de Kevin)
+export interface DatosUsuariosGoogle {
+  id: string
+  nombre: string
+  email: string
+  photoURL: string
+  celular: string
+  dirección: string
+  rol: "client"
+}
+// Nuevos tipos de usuario extendidos (Codigo de Kevin)
+export interface CompletarDatosGoogle {
+  celular: string
+  dirección: string
+}
 
+// Codigo de Kevin
+export interface DatosCliente {
+  id: string
+  nombre: string
+  email: string
+  celular: string
+  dirección: string
+  fotoURL: string
+}
+// Codigo de Kevin
+export interface Order {
+  id: string
+  clientId: string
+  clientName: string
+  items: CartItem[]
+  total: number
+  date: string
+  status: "pending" | "confirmed" | "delivered"
+}
 // Interfaz para el contexto de la aplicación
 interface AppContextType {
   // State
@@ -35,8 +69,17 @@ interface AppContextType {
   users: ClientUser[]
   products: Product[]
   cart: Cart // Asegúrate de que sea de tipo 'Cart'
-  orders: any[]
+  //orders: any[]  cambiar a este en caso de que no funcione la linea 82
   searchTerm: string
+
+  //handmade marge :p
+  datosUsuariosGoogle: DatosUsuariosGoogle | null
+  completarDatosGoogle: CompletarDatosGoogle | null
+  datosCliente: DatosCliente | null
+  setUser: (user: DatosUsuariosGoogle) => void
+  setCompleteDatosGoogle: (datos: CompletarDatosGoogle) => void
+  updateDatosCliente: (datos: DatosCliente) => void
+  orders: Order[]
 
   // Actions
   setCurrentView: (view: string) => void
@@ -89,8 +132,36 @@ export const AppProvider: React.FC<AppProviderProps> = ({
   const [users, setUsers] = useState<ClientUser[]>([])
   const [products, setProducts] = useState<Product[]>([])
   const [cart, setCart] = useState<Cart>({ userId: "", items: [] }) // Inicializar con estructura de Cart
-  const [orders, setOrders] = useState<any[]>([])
+  //const [orders, setOrders] = useState<any[]>([])    código sucio srry, usar en caso de falla en la linea 131
   const [searchTerm, setSearchTerm] = useState("")
+  const [datosUsuariosGoogle, setDatosUsuariosGoogle] = useState<DatosUsuariosGoogle | null>(null)
+  const [completarDatosGoogle, setCompletarDatosGoogle] = useState<CompletarDatosGoogle | null>(null)
+  const [datosCliente, setDatosCliente] = useState<DatosCliente | null>(null)
+  const [orders, setOrders] = useState<Order[]>([]) // Tipado ahora correcto
+
+  const setUser = (user: DatosUsuariosGoogle) => {
+  const convertedUser: ClientUser = {
+    uid: user.id,
+    name: user.nombre,
+    email: user.email,
+    photoURL: user.photoURL,
+    type: user.rol,
+  }
+  setCurrentUser(convertedUser)
+  setDatosUsuariosGoogle(user)
+  setUserType("client")
+}
+
+const setCompleteDatosGoogle = (datos: CompletarDatosGoogle) => {
+  setCompletarDatosGoogle(datos)
+  setUserType("client")
+}
+
+// legacy.- setDatosCliente(){}        
+const updateDatosCliente = (datos: DatosCliente) => {
+  setDatosCliente(datos)
+  setUserType("client")
+}
 
   const navigateTo = (view: string) => {
     setCurrentView(view)
@@ -330,6 +401,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({
     cart,
     orders,
     searchTerm,
+    // NUEVOS CAMPOS
+    datosUsuariosGoogle,
+    completarDatosGoogle,
+    datosCliente,
     // Actions
     setCurrentView,
     navigateTo,
@@ -349,6 +424,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({
     removeCartItem,
     clearCart,
     getCartTotal,
+     // NUEVAS FUNCIONES
+    setUser,
+    setCompleteDatosGoogle,
+    updateDatosCliente,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
