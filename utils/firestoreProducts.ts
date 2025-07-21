@@ -51,6 +51,7 @@ export async function addProduct(product: Omit<Product, "id">): Promise<void> {
  * Actualiza un producto existente en la colección 'products' en Firestore.
  * @param {Product} Datos del producto a actualizar (debe incluir el ID).
  * @returns {Promise<void>} 
+ * */
 export async function updateProduct(product: Product): Promise<void> {
   if (!product.id) {
     console.error("Error: El producto a actualizar debe tener un ID.")
