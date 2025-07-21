@@ -6,6 +6,31 @@ import { onAuthStateChanged, signOut, type User as FirebaseAuthUser } from "fire
 import { doc, setDoc, getDoc, type DocumentData } from "firebase/firestore"
 import { auth, db } from "../backend/firebase"
 
+// Types
+export interface DatosUsuariosGoogle{
+  id: string,
+  nombre: string,
+  email: string,
+  photoURL: string,
+  celular:string,
+  dirección: string,
+  rol: "client"
+}
+export interface CompletarDatosGoogle {
+  celular: string,
+  dirección: string,
+}
+
+export interface DatosCliente{
+  id: string,
+  nombre: string,
+  email: string,
+  celular: string,
+  dirección: string,
+  fotoURL: string
+  type: "client" | "admin"
+}
+
 import {
   fetchProducts,
   addProduct as addProductFirestore,
@@ -65,6 +90,9 @@ interface AppContextType {
   // State
   currentView: string
   userType: "client" | "admin" | null
+  datosUsuariosGoogle: DatosUsuariosGoogle | null
+  completarDatosGoogle: CompletarDatosGoogle | null
+  datosCliente: DatosCliente | null
   currentUser: ClientUser | null
   users: ClientUser[]
   products: Product[]
@@ -73,11 +101,6 @@ interface AppContextType {
   searchTerm: string
 
   //handmade marge :p
-  datosUsuariosGoogle: DatosUsuariosGoogle | null
-  completarDatosGoogle: CompletarDatosGoogle | null
-  datosCliente: DatosCliente | null
-  setUser: (user: DatosUsuariosGoogle) => void
-  setCompleteDatosGoogle: (datos: CompletarDatosGoogle) => void
   updateDatosCliente: (datos: DatosCliente) => void
   orders: Order[]
 
@@ -104,6 +127,9 @@ interface AppContextType {
   removeCartItem: (productId: string) => Promise<void>
   clearCart: () => Promise<void>
   getCartTotal: () => number
+  setUser: (user: DatosUsuariosGoogle) => void
+  setCompleteDatosGoogle: (datos: CompletarDatosGoogle) => void
+  setDatosCliente: (datos: DatosCliente) => void 
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -139,23 +165,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({
   const [datosCliente, setDatosCliente] = useState<DatosCliente | null>(null)
   const [orders, setOrders] = useState<Order[]>([]) // Tipado ahora correcto
 
-  const setUser = (user: DatosUsuariosGoogle) => {
-  const convertedUser: ClientUser = {
-    uid: user.id,
-    name: user.nombre,
-    email: user.email,
-    photoURL: user.photoURL,
-    type: user.rol,
-  }
-  setCurrentUser(convertedUser)
-  setDatosUsuariosGoogle(user)
-  setUserType("client")
-}
-
-const setCompleteDatosGoogle = (datos: CompletarDatosGoogle) => {
-  setCompletarDatosGoogle(datos)
-  setUserType("client")
-}
 
 // legacy.- setDatosCliente(){}        
 const updateDatosCliente = (datos: DatosCliente) => {
@@ -166,7 +175,7 @@ const updateDatosCliente = (datos: DatosCliente) => {
   const navigateTo = (view: string) => {
     setCurrentView(view)
   }
-
+  
   // Función para guardar/actualizar datos del usuario en Firestore
   const guardarDatosUsuario = async (user: FirebaseAuthUser) => {
     if (!user || !user.uid) return
@@ -222,6 +231,7 @@ const updateDatosCliente = (datos: DatosCliente) => {
     }
   }
 
+
   // Listener de autenticación de Firebase
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -239,6 +249,13 @@ const updateDatosCliente = (datos: DatosCliente) => {
 
   // Función de logout que usa Firebase Auth
   const logout = async () => {
+    setCurrentUser(null)
+    setDatosUsuariosGoogle(null)
+    setCompletarDatosGoogle(null)
+    setDatosCliente(null)
+    setUserType(null)
+    // setCart([]) 
+    setCurrentView("home")
     try {
       await signOut(auth)
       navigateTo("home")
@@ -391,20 +408,44 @@ const updateDatosCliente = (datos: DatosCliente) => {
     }, 0)
   }
 
+  // Función para establecer usuario desde datos simplificados (ej: login Google)
+  const setUser = (user: DatosUsuariosGoogle) => {
+    const convertedUser: ClientUser = {
+      uid: user.id,
+      name: user.nombre,
+      email: user.email,
+      photoURL: user.photoURL,
+      type: "client", // Cambia según tu lógica si es admin
+    }
+
+    setCurrentUser(convertedUser)
+    setDatosUsuariosGoogle(user)
+    setUserType("client") // O "admin" según corresponda
+  }
+  const setCompleteDatosGoogle = (datos: CompletarDatosGoogle) => {
+    setCompletarDatosGoogle(datos)
+    setUserType("client")
+  }
+  const setDateCliente = (datos: DatosCliente) => {
+    setDatosCliente(datos)
+    setUserType("client")
+  }
+
   const value: AppContextType = {
     // State
     currentView,
     userType,
     currentUser,
+    datosUsuariosGoogle,
+    completarDatosGoogle,
+    setCompleteDatosGoogle,
+    datosCliente,
+    setDatosCliente,
     users,
     products,
     cart,
     orders,
     searchTerm,
-    // NUEVOS CAMPOS
-    datosUsuariosGoogle,
-    completarDatosGoogle,
-    datosCliente,
     // Actions
     setCurrentView,
     navigateTo,
@@ -426,9 +467,9 @@ const updateDatosCliente = (datos: DatosCliente) => {
     getCartTotal,
      // NUEVAS FUNCIONES
     setUser,
-    setCompleteDatosGoogle,
     updateDatosCliente,
-  }
 
+  }
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
+  
 }
