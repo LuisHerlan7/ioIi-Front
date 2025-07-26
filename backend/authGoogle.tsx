@@ -73,14 +73,14 @@ async function guardarDatosUsuario(
     if (userSnap.exists()) {
       const data = userSnap.data()
 
-      if (data.rol === "cliente") {
+      if (data.rol === "client") {
         // ✅ Usuario válido con rol cliente y datos completos
         setUser({
           id: user.uid,
           nombre: data.nombre ?? user.displayName ?? "",
           email: data.email ?? user.email ?? "",
           photoURL: data.photoURL ?? user.photoURL ?? "",
-          rol: "cliente",
+          rol: "client",
           celular: data.celular ?? "",
           dirección: data.dirección ?? "",
         })
@@ -97,7 +97,7 @@ async function guardarDatosUsuario(
         nombre: user.displayName ?? "",
         email: user.email ?? "",
         photoURL: user.photoURL ?? "",
-        rol: "cliente", // por si quieres usarlo después
+        rol: "client", // por si quieres usarlo después
         celular: "",
         dirección: "",
       

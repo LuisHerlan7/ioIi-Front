@@ -31,7 +31,7 @@ const TerminarRegistrarButton: React.FC<Props> = ({ datosUsuario, onTerminar }) 
         email: datosUsuario.email,
         celular: datosUsuario.telefono,
         direccion: datosUsuario.direccion,
-        rol: "cliente",
+        rol: "client",
 
      
         creadoEn: new Date()

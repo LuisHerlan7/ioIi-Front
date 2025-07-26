@@ -146,7 +146,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({
           {
             name: user.displayName || data.name,
             email: user.email || data.email,
-            photoURL: user.photoURL || data.photoURL,
+            photoURL: user.photoURL ?? data.photoURL ?? null,
             emailVerified: user.emailVerified,
             updatedAt: new Date().toISOString(),
           },
