@@ -154,13 +154,16 @@ export const AppProvider: React.FC<AppProviderProps> = ({
           { merge: true },
         )
         console.log("Usuario registrado y datos actualizados en Firestore.")
-        setCurrentUser({
-          uid: user.uid,
-          name: user.displayName,
-          email: user.email,
-          photoURL: user.photoURL,
-          type: data.type || data.rol || "client", // Usa 'type' o 'rol' de Firestore
-        })
+       setCurrentUser({
+  uid: user.uid,
+  name: user.displayName ?? "",
+  celular: data.celular ?? "",
+  direccion: data.dirección ?? "",
+  email: user.email ?? "",
+  photoURL: user.photoURL ?? "",
+  type: (data.type || data.rol || "client") as "client" | "admin",
+})
+
         setUserType(data.type || data.rol || "client") // Usa 'type' o 'rol' de Firestore
       } else {
         await setDoc(userRef, {
@@ -174,12 +177,16 @@ export const AppProvider: React.FC<AppProviderProps> = ({
         })
         console.log("Nuevo usuario guardado en Firestore.")
         setCurrentUser({
-          uid: user.uid,
-          name: user.displayName,
-          email: user.email,
-          photoURL: user.photoURL,
-          type: "client",
-        })
+  uid: user.uid,
+  name: user.displayName ?? "",
+  email: user.email ?? "",
+  photoURL: user.photoURL ?? null,
+  type: "client",
+  direccion: "", // O data.direccion si ya existe
+  number: "",    // Lo mismo aquí
+  password: "",  // Si no usas password, considera hacerlo opcional
+})
+
         setUserType("client")
       }
     } catch (error) {
@@ -367,6 +374,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({
     const convertedUser: ClientUser = {
       uid: user.id,
       name: user.nombre,
+      celular: user.celular,
+      direccion: user.dirección,
       email: user.email,
       photoURL: user.photoURL,
       password: "", // Puedes dejar vacío o un valor temporal

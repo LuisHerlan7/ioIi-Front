@@ -45,12 +45,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({ type }) => {
 
     // Login exitoso
     setCurrentUser({
-      uid: firebaseUser.uid,
-      name: firebaseUser.displayName ?? userData.name,
-      email: firebaseUser.email,
-      photoURL: firebaseUser.photoURL ?? userData.photoURL ?? null,
-      type: userData.type ?? userData.rol ?? "client",
-    })
+  uid: firebaseUser.uid,
+  name: firebaseUser.displayName ?? userData.name ?? "",
+  email: firebaseUser.email ?? "",
+  photoURL: firebaseUser.photoURL ?? userData.photoURL ?? null,
+  type: userData.type ?? userData.rol ?? "client",
+  direccion: userData.direccion ?? "",  // 👈 agrega esto
+  number: userData.number ?? "",        // 👈 si también es requerido
+  password: "",                         // 👈 si también es parte de ClientUser
+})
+
     setUserType(userData.type ?? userData.rol ?? "client")
     navigateTo(type === "admin" ? "admin-dashboard" : "catalog")
   } catch (error: any) {
