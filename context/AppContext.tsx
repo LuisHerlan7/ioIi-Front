@@ -45,11 +45,12 @@ import { uploadImageToCloudinary } from "../utils/cloudinaryUpload"
 // Interfaz para el usuario en el contexto
 export interface ClientUser extends DocumentData {
   uid: string
-  name: string | null
+  name: string
   email: string | null
   photoURL: string | null
   // Usamos 'type' aquí para el rol del usuario, consistente con el campo 'rol' en Firestore.
-  type: "client" | "admin" // O el rol que asignes
+  type: "client" | "admin"
+  direccion:string // O el rol que asignes
 }
 
 // Interfaz para el contexto de la aplicación
@@ -146,20 +147,23 @@ export const AppProvider: React.FC<AppProviderProps> = ({
           {
             name: user.displayName || data.name,
             email: user.email || data.email,
-            photoURL: user.photoURL || data.photoURL,
+            photoURL: user.photoURL ?? data.photoURL ?? null,
             emailVerified: user.emailVerified,
             updatedAt: new Date().toISOString(),
           },
           { merge: true },
         )
         console.log("Usuario registrado y datos actualizados en Firestore.")
-        setCurrentUser({
-          uid: user.uid,
-          name: user.displayName,
-          email: user.email,
-          photoURL: user.photoURL,
-          type: data.type || data.rol || "client", // Usa 'type' o 'rol' de Firestore
-        })
+       setCurrentUser({
+  uid: user.uid,
+  name: user.displayName ?? "",
+  celular: data.celular ?? "",
+  direccion: data.dirección ?? "",
+  email: user.email ?? "",
+  photoURL: user.photoURL ?? "",
+  type: (data.type || data.rol || "client") as "client" | "admin",
+})
+
         setUserType(data.type || data.rol || "client") // Usa 'type' o 'rol' de Firestore
       } else {
         await setDoc(userRef, {
@@ -173,12 +177,16 @@ export const AppProvider: React.FC<AppProviderProps> = ({
         })
         console.log("Nuevo usuario guardado en Firestore.")
         setCurrentUser({
-          uid: user.uid,
-          name: user.displayName,
-          email: user.email,
-          photoURL: user.photoURL,
-          type: "client",
-        })
+  uid: user.uid,
+  name: user.displayName ?? "",
+  email: user.email ?? "",
+  photoURL: user.photoURL ?? null,
+  type: "client",
+  direccion: "", // O data.direccion si ya existe
+  number: "",    // Lo mismo aquí
+  password: "",  // Si no usas password, considera hacerlo opcional
+})
+
         setUserType("client")
       }
     } catch (error) {
@@ -366,6 +374,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({
     const convertedUser: ClientUser = {
       uid: user.id,
       name: user.nombre,
+      celular: user.celular,
+      direccion: user.dirección,
       email: user.email,
       photoURL: user.photoURL,
       password: "", // Puedes dejar vacío o un valor temporal

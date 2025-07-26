@@ -5,6 +5,9 @@ import { useState } from "react"
 import { Eye, EyeOff, User, Mail, Lock, Sparkles, AlignCenter } from "lucide-react"
 import { useApp } from "../../context/AppContext"
 import GoogleLoginButton from "@/backend/authGoogle"
+import { auth, db } from "@/backend/firebase"
+import {signInWithEmailAndPassword} from "firebase/auth"
+import { doc, getDoc } from "firebase/firestore"
 
 interface LoginFormProps {
   type: "client" | "admin"
@@ -17,18 +20,54 @@ export const LoginForm: React.FC<LoginFormProps> = ({ type }) => {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    const user = users.find((u) => u.email === email && u.password === password && u.type === type)
-    if (user) {
-      setCurrentUser(user)
-      setUserType(type)
-      navigateTo(type === "admin" ? "admin-dashboard" : "catalog")
-      setError("")
+  const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault()
+  setError("")
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password)
+    const firebaseUser = userCredential.user
+
+    // Traer info completa desde Firestore
+    const userRef = doc(db, "users", firebaseUser.uid)
+    const userSnap = await getDoc(userRef)
+
+    if (!userSnap.exists()) {
+      setError("Usuario no registrado en la base de datos")
+      return
+    }
+
+    const userData = userSnap.data()
+    if (userData.type !== type && userData.rol !== type) {
+      setError("Este usuario no tiene permisos como " + type)
+      return
+    }
+
+    // Login exitoso
+    setCurrentUser({
+  uid: firebaseUser.uid,
+  name: firebaseUser.displayName ?? userData.name ?? "",
+  email: firebaseUser.email ?? "",
+  photoURL: firebaseUser.photoURL ?? userData.photoURL ?? null,
+  type: userData.type ?? userData.rol ?? "client",
+  direccion: userData.direccion ?? "",  // 👈 agrega esto
+  number: userData.number ?? "",        // 👈 si también es requerido
+  password: "",                         // 👈 si también es parte de ClientUser
+})
+
+    setUserType(userData.type ?? userData.rol ?? "client")
+    navigateTo(type === "admin" ? "admin-dashboard" : "catalog")
+  } catch (error: any) {
+    if (error.code === "auth/user-not-found") {
+      setError("Usuario no encontrado")
+    } else if (error.code === "auth/wrong-password") {
+      setError("Contraseña incorrecta")
     } else {
-      setError("Credenciales incorrectas")
+      setError("Error al iniciar sesión: " + error.message)
     }
   }
+}
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-violet-100 flex items-center justify-center p-4 relative overflow-hidden">
@@ -131,4 +170,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ type }) => {
       </div>
     </div>
   )
+  function handleLogineFirebase(e: React.FormEvent) {
+    e.preventDefault()
+    // Implement Firebase login logic here
+
+  }
+    
+  
 }

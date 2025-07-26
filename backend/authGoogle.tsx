@@ -72,43 +72,44 @@ async function guardarDatosUsuario(
 
     if (userSnap.exists()) {
       const data = userSnap.data()
+      const rol = data.type || "client"
 
-      if (data.rol === "cliente") {
-        // ✅ Usuario válido con rol cliente y datos completos
-        setUser({
-          id: user.uid,
-          nombre: data.nombre ?? user.displayName ?? "",
-          email: data.email ?? user.email ?? "",
-          photoURL: data.photoURL ?? user.photoURL ?? "",
-          rol: "cliente",
-          celular: data.celular ?? "",
-          dirección: data.dirección ?? "",
-        })
-        navigateTo("catalog")
-      } else {
-        // ❌ Usuario tiene otro rol o no es cliente
-        console.log("Usuario no es cliente, redirigiendo...")
-        navigateTo("no-autorizado") // puedes crear esta vista si quieres
+      // Solo permitir ingreso si el usuario es "client" o "admin"
+      if (rol !== "client" && rol !== "admin") {
+        console.warn("Rol no autorizado:", rol)
+        navigateTo("no-autorizado")
+        return
       }
-    } else {
-      // 🆕 Usuario no existe aún: redirige a completar registro
-      setUser({
+
+      const userData = {
         id: user.uid,
-        nombre: user.displayName ?? "",
-        email: user.email ?? "",
-        photoURL: user.photoURL ?? "",
-        rol: "cliente", // por si quieres usarlo después
-        celular: "",
-        dirección: "",
-      
-      })
-      navigateTo("completar-registro")
-      console.log("Usuario nuevo, redirigiendo a completar registro.")
+        nombre: data.nombre ?? user.displayName ?? "",
+        email: data.email ?? user.email ?? "",
+        photoURL: data.photoURL ?? user.photoURL ?? "",
+        celular: data.celular ?? "",
+        dirección: data.dirección ?? "",
+        rol,
+      }
+
+      setUser(userData)
+
+      if (rol === "admin") {
+        navigateTo("admin-dashboard")
+      } else {
+        navigateTo("catalog")
+      }
+
+    } else {
+      // Usuario NO existe → lanzar error si intenta ser admin
+      console.error("El usuario no está registrado en Firestore.")
+      navigateTo("no-autorizado")
     }
   } catch (error) {
-    console.error("Error guardando usuario:", error)
+    console.error("Error verificando el usuario:", error)
+    navigateTo("no-autorizado")
   }
 }
+
 
 
 export default GoogleLoginButton
