@@ -45,11 +45,12 @@ import { uploadImageToCloudinary } from "../utils/cloudinaryUpload"
 // Interfaz para el usuario en el contexto
 export interface ClientUser extends DocumentData {
   uid: string
-  name: string | null
+  name: string
   email: string | null
   photoURL: string | null
   // Usamos 'type' aquí para el rol del usuario, consistente con el campo 'rol' en Firestore.
-  type: "client" | "admin" // O el rol que asignes
+  type: "client" | "admin"
+  direccion:string // O el rol que asignes
 }
 
 // Interfaz para el contexto de la aplicación

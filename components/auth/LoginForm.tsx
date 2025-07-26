@@ -49,9 +49,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ type }) => {
       name: firebaseUser.displayName ?? userData.name,
       email: firebaseUser.email,
       photoURL: firebaseUser.photoURL ?? userData.photoURL ?? null,
-      type: userData.type ?? userData.rol ?? "cliente",
+      type: userData.type ?? userData.rol ?? "client",
     })
-    setUserType(userData.type ?? userData.rol ?? "cliente")
+    setUserType(userData.type ?? userData.rol ?? "client")
     navigateTo(type === "admin" ? "admin-dashboard" : "catalog")
   } catch (error: any) {
     if (error.code === "auth/user-not-found") {

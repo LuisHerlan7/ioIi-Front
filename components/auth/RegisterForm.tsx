@@ -5,6 +5,10 @@ import { useState } from "react"
 import { Plus } from "lucide-react"
 import { ClientUser, useApp } from "../../context/AppContext"
 import RegistrarButton from "@/backend/crearCuenta"
+import { auth, db } from "@/backend/firebase"
+import { doc, setDoc } from "firebase/firestore"
+import { createUserWithEmailAndPassword } from "firebase/auth"
+import { set } from "react-hook-form"
 
 export const RegisterForm: React.FC = () => {
   const { users, setUsers, setCurrentUser, setUserType, navigateTo } = useApp()
@@ -13,38 +17,52 @@ export const RegisterForm: React.FC = () => {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
+  const [number, setNumber] = useState("")
+  const [direccion, setDireccion] = useState("")
 
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault()
+ const handleRegister = async (e: React.FormEvent) => {
+  e.preventDefault()
 
-    if (password !== confirmPassword) {
-      setError("Las contraseñas no coinciden")
-      return
-    }
+  setError("")
 
-    if (users.find((u) => u.email === email)) {
-      setError("El correo ya está registrado")
-      return
-    }
+  if (password !== confirmPassword) {
+    setError("Las contraseñas no coinciden")
+    return
+  }
 
-    const newUser = {
-      id: Date.now().toString(),
-      name,
+  if (users.find((u) => u.email === email)) {
+    setError("El correo ya está registrado")
+    return
+  }
+
+  try {
+    // 1. Crear usuario con Firebase Auth
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+    const user = userCredential.user
+    console.log("nombre", name)
+    // 2. Guardar en Firestore (colección "clients")
+    const clientData: ClientUser = {
+      uid: user.uid,
+      name: name.trim(),
       email,
-      password,
-      type: "client" as const,
+      photoURL: user.photoURL ?? null,
+      type: "client",
+      number,
+      direccion,
     }
 
-    setUsers((prev) => [...prev, newUser])
-    setCurrentUser(newUser)
+    await setDoc(doc(db, "users", user.uid), clientData)
+
+    // 3. Actualizar el contexto de tu app
+    setUsers([...users, clientData])
+    setCurrentUser(clientData)
     setUserType("client")
     navigateTo("catalog")
+  } catch (err: any) {
+    console.error(err)
+    setError("Error al registrar: " + err.message)
   }
-
-  function registrarNormal(users: ClientUser[]): void {
-    // Simulate registration logic, e.g., logging users or sending to backend
-    console.log("Registrando usuarios:", users)
-  }
+}
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -81,6 +99,28 @@ export const RegisterForm: React.FC = () => {
               required
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Celular</label>
+            <input
+              type="number"
+              value={number}
+              onChange={(e) => setNumber(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="tu numero de celular"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Direccion</label>
+            <input
+              type="text"
+              value={direccion}
+              onChange={(e) => setDireccion(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="tu direccion"
+              required
+            />
+          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
@@ -111,11 +151,12 @@ export const RegisterForm: React.FC = () => {
           )}
 
           <button
-          type="button"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-             onClick={() => registrarNormal(users)}>
-            Crear cuenta
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          >
+          Crear cuenta
           </button>
+
         </form>
 
         <div className="mt-6 text-center">
