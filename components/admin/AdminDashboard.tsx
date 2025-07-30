@@ -127,6 +127,23 @@ export const AdminDashboard: React.FC = () => {
               Ver pedidos →
             </div>
           </button>
+          <button
+            onClick={() => navigateTo("vender-como-admin")}
+            className="group bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-left border border-white/50 hover:border-blue-200 transform hover:scale-[1.02]"
+          >
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <BarChart3 className="text-white" size={28} />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-300">
+              Vender Como Admin
+            </h3>
+            <p className="text-gray-600 leading-relaxed">
+              Vende productos directamente como administrador, gestionando precios y stock de forma rápida y sencilla
+            </p>
+            <div className="mt-4 text-blue-600 font-semibold group-hover:translate-x-2 transition-transform duration-300">
+              Vender Como Admin →
+            </div>
+          </button>
         </div>
       </div>
     </div>

@@ -13,6 +13,7 @@ import { AdminProducts } from "../components/admin/AdminProducts"
 import { AdminOrders } from "../components/admin/AdminOrders"
 import { AppProvider } from "../context/AppContext"
 import {CompletedRegisterForm} from "../components/auth/CompletarRegistro"
+import { VenderComoAdmin } from "../components/admin/ventas/VenderComoAdmin"
 
 // Main App Component
 export default function ECommerceApp() {
@@ -44,6 +45,8 @@ export default function ECommerceApp() {
         return <AdminProducts />
       case "admin-orders":
         return <AdminOrders />
+      case "vender-como-admin":
+        return <VenderComoAdmin />
       case "completar-registro":
         return <CompletedRegisterForm />
       default:
