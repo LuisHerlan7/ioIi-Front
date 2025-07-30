@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react"
 import { onAuthStateChanged, signOut, type User as FirebaseAuthUser } from "firebase/auth"
 import { doc, setDoc, getDoc, type DocumentData } from "firebase/firestore"
 import { auth, db } from "../backend/firebase"
@@ -86,7 +86,7 @@ interface AppContextType {
   deleteProduct: (id: string) => Promise<void>
 
   // Funciones de carrito que interactúan con Firestore
-  addToCart: (productId: string, quantity: number) => Promise<void>
+  addToCart: (product: Product, quantity?: number) => Promise<void>
   updateCartItemQuantity: (productId: string, quantity: number) => Promise<void>
   removeCartItem: (productId: string) => Promise<void>
   clearCart: () => Promise<void>
@@ -127,6 +127,28 @@ export const AppProvider: React.FC<AppProviderProps> = ({
   const [datosUsuariosGoogle, setDatosUsuariosGoogle] = useState<DatosUsuariosGoogle | null>(null)
   const [completarDatosGoogle, setCompletarDatosGoogle] = useState<CompletarDatosGoogle | null>(null)
   const [datosCliente, setDatosCliente] = useState<DatosCliente | null>(null)
+
+  // Funciones de sincronización del carrito con Firebase
+  const syncCartWithFirebase = useCallback(async () => {
+    if (!currentUser?.uid) return
+
+    try {
+      const fetchedCart = await fetchCart(currentUser.uid)
+      setCart(fetchedCart)
+    } catch (error) {
+      console.error("Error al sincronizar carrito:", error)
+    }
+  }, [currentUser?.uid, setCart])
+
+  const saveCartToFirebase = useCallback(async () => {
+    if (!currentUser?.uid) return
+
+    try {
+      await saveCart(currentUser.uid, cart.items)
+    } catch (error) {
+      console.error("Error al guardar carrito en Firebase:", error)
+    }
+  }, [currentUser?.uid, cart.items])
 
   const navigateTo = (view: string) => {
     setCurrentView(view)
@@ -238,22 +260,17 @@ export const AppProvider: React.FC<AppProviderProps> = ({
     loadProducts()
   }, [])
 
-  // Cargar carrito del usuario actual cuando el usuario cambia
+  // Sincronizar carrito cuando el usuario cambia
   useEffect(() => {
-    const loadCart = async () => {
-      if (currentUser?.uid) {
-        try {
-          const fetchedCart = await fetchCart(currentUser.uid)
-          setCart(fetchedCart)
-        } catch (error) {
-          console.error("Fallo al cargar el carrito:", error)
-        }
-      } else {
-        setCart({ userId: "", items: [] })
-      }
-    }
-    loadCart()
+    syncCartWithFirebase()
   }, [currentUser?.uid])
+
+  // Guardar carrito en Firebase cuando cambia
+  useEffect(() => {
+    if (currentUser?.uid && cart.items.length > 0) {
+      saveCartToFirebase()
+    }
+  }, [cart.items, currentUser?.uid])
 
   // Funciones CRUD de Productos (integrando Firestore y Cloudinary)
   const addProduct = async (product: Omit<Product, "id">, imageFile?: File) => {
@@ -295,13 +312,18 @@ export const AppProvider: React.FC<AppProviderProps> = ({
   }
 
   // Funciones de Carrito (integrando Firestore)
-  const addToCart = async (productId: string, quantity: number) => {
+  const addToCart = async (product: Product, quantity: number = 1) => {
     if (!currentUser?.uid) {
       console.warn("No hay usuario logueado para añadir al carrito.")
       return
     }
 
-    const existingItemIndex = cart.items.findIndex((item) => item.productId === productId)
+    if (!product.id) {
+      console.error("Producto sin ID válido")
+      return
+    }
+
+    const existingItemIndex = cart.items.findIndex((item) => item.productId === product.id)
     let updatedItems: CartItem[]
 
     if (existingItemIndex > -1) {
@@ -309,7 +331,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({
         index === existingItemIndex ? { ...item, quantity: item.quantity + quantity } : item,
       )
     } else {
-      updatedItems = [...cart.items, { productId, quantity }]
+      updatedItems = [...cart.items, { productId: product.id, quantity }]
     }
 
     try {
