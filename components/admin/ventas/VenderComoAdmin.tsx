@@ -9,7 +9,8 @@ import { useApp } from "../../../context/AppContext"
 import AgregarModal from "./agregarModal"
 import {getAuth, onAuthStateChanged} from "firebase/auth"
 import { getFirestore, doc, collection, getDocs } from "firebase/firestore"
-import {app} from "../../../backend/firebase"
+import { app } from '../../../backend/firebase'; // ✅ CORRECTO
+
 
 interface Product {
   id: string

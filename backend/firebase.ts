@@ -16,4 +16,5 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app); // Si necesitas autenticación, puedes importar y usar getAuth
 
-export { db, auth }; // exportas la base de datos y la autenticación
+export { db, auth, app }; // exportas la base de datos y la autenticación
+ // exportas la base de datos y la autenticación
